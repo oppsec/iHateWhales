@@ -29,7 +29,8 @@ echo -e """ \033[5;37m
 
 echo "${normal}[${green}+${normal}] Enumerating the container."
 echo ""
-# -- começando a putaria kk --
+
+# STARTS ENUMERATION
 enumeration(){
 
 echo "${yellow} -- NETWORK  --"
