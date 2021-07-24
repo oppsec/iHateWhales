@@ -231,7 +231,7 @@ docker_verificar(){
         cve-verificacao    
     else
         echo "${yellow} -- CVE's CHECKER  -- ${DG}"
-        echo "${DG}[?] could not identify the docker version, binary not found. feels bad. $normal"
+        echo "${DG}[?] could not identify the docker version. $normal"
 
     fi
 }
