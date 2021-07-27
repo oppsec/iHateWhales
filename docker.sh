@@ -84,21 +84,6 @@ else
     echo "${normal}[${green}+${normal}] ${green}[DOCKER VERSION] ${normal}------->" ${DG}DOCKER BINARY NOT FOUND =[ $normal
 fi
 
-# ────  CAPABILITIES ──────
-verificar(){
-    capshEXISTE=$(which capsh 2>/dev/null)
-
-    if [ -x "$(command -v $capshEXISTE)" ]; then
-        echo "${yellow} -- CAPABILITIES  -- $normal"
-        cap_perigosos="cap_sys_admin\|cap_sys_ptrace\|cap_sys_module\|dac_read_search\|dac_override"
-        capsh --print |grep 'cap_' | cut -d ' ' -f 3- | tr -d '=' | sed "s/\($cap_perigosos\)/${UNDERLINED}${vermelho}&${sem_cor}/g"            
-    else
-        echo "${yellow} -- CAPABILITIES  -- ${normal}"
-        echo "${DG}CAPSH BINARY NOT FOUND =[ $normal"
-    fi
-
-}
-
 # ────  SUID ──────
 
 suid(){
@@ -137,7 +122,7 @@ echo "$(echo $tools | tr ' ' '\n')"
 
 ipcont="$(hostname -I 2>/dev/null || hostname -i)"
 ipdef=$(echo "$ipcont" | cut -d'.' -f1-3)
-portas_legais=("22 53 80 81 8080 3216 8081 21 25 3000 3306 33060 3389 139 445 1434 389 636 3268 3269 8000")
+portas_legais=("22 53 80 81 8080 3216 8081 21 25 3000 3306 33060 3389 139 445 1434 389 636 3268 3269 8000 10050 10051")
 
 hosts(){
 
@@ -167,7 +152,7 @@ portasBASH(){
 
 for letter in $(cat ips.txt)
     do
-        for i in {22,53,80,81,8080,3216,8081,21,25,3000,3306,33060,3389,139,445,1434,389,636,3268,3269,8000} ; do
+        for i in {22,53,80,81,8080,3216,8081,21,25,3000,3306,33060,3389,139,445,1434,389,636,3268,3269,8000,10050,10051} ; do
         PORT=$i
         (echo  > /dev/tcp/$letter/$PORT) >& /dev/null &&
         echo "${letter}${RED}:$PORT${normal}" 
@@ -235,7 +220,7 @@ docker_verificar(){
         cve-verificacao    
     else
         echo "${yellow} -- CVE's CHECKER  -- ${DG}"
-        echo "${DG}[?] could not identify the docker version, binary not found. feels bad. $normal"
+        echo "${DG}[?] could not identify the docker version. $normal"
 
     fi
 }
@@ -254,6 +239,23 @@ verificar_internet(){
 
     fi
 
+}
+
+verificar(){
+    capshEXISTE=$(which capsh 2>/dev/null)
+    echo "${yellow} -- CAPABILITIES  -- ${normal}"
+    if [ -x "$(command -v getcap)" ]; then
+        capcont=$(getcap -r / 2>/dev/null)
+        echo "$capcont"
+    fi 
+    
+    if [ -x "$(command -v $capshEXISTE)" ]; then
+        echo "${DG}# ----- $normal"
+        cap_perigosos="cap_sys_admin\|cap_sys_ptrace\|cap_sys_module\|dac_read_search\|dac_override\|cap_shown"
+        capsh --print |grep 'cap_' | cut -d ' ' -f 3- | tr -d '=' | sed "s/\($cap_perigosos\)/${UNDERLINED}${vermelho}&${sem_cor}/g"            
+    else
+        echo "${DG}CAPSH BINARY NOT FOUND =[ $normal"
+        fi
 }
 
 enumeration
