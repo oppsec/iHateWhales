@@ -29,8 +29,7 @@ echo -e """ \033[5;37m
 
 echo "${normal}[${green}+${normal}] Enumerating the container."
 echo ""
-
-# STARTS ENUMERATION
+# -- começando a putaria kk --
 enumeration(){
 
 echo "${yellow} -- NETWORK  --"
@@ -41,8 +40,13 @@ echo "${normal}[${green}+${normal}]${green} CONTAINER ID ${normal}---> "${contai
 
 # ────  IP DO CONTAINER ──────
 
-container_ip=$(ip route get 1 | head -1 | cut -d' ' -f7)
-echo "${normal}[${green}+${normal}] ${green}CONTAINER IP ${normal}---> "${container_ip}
+if [ -x "$(command -v hostname)" ]; then
+    hostcont=$(hostname -I 2>/dev/null || hostname -i)
+    echo "${normal}[${green}+${normal}] ${green}CONTAINER IP ${normal}---> "${hostcont} 
+else
+    container_ip=$(ip route get 1 | head -1 | cut -d' ' -f7)
+    echo "${normal}[${green}+${normal}] ${green}CONTAINER IP ${normal}---> "${container_ip}
+fi
 
 # ────  GATEWAY PADRÃO ──────
 
@@ -231,7 +235,7 @@ docker_verificar(){
         cve-verificacao    
     else
         echo "${yellow} -- CVE's CHECKER  -- ${DG}"
-        echo "${DG}[?] could not identify the docker version. $normal"
+        echo "${DG}[?] could not identify the docker version, binary not found. feels bad. $normal"
 
     fi
 }
