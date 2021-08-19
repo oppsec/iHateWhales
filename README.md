@@ -27,6 +27,5 @@ bash docker.sh
 <p align="center">  
   <img src="https://user-images.githubusercontent.com/44043159/130071286-d6c131bb-55fb-4279-b292-73f1e5f956f1.png">
   <img src="https://user-images.githubusercontent.com/44043159/130071842-055ce900-311a-4d35-a461-9d7c28ec61e0.png">
-  <img src="https://user-images.githubusercontent.com/44043159/130071587-f81c7b5b-5822-4159-b749-baa25673dc1e.png">
   <img src="https://user-images.githubusercontent.com/44043159/130071693-6a2eece5-feb4-4203-98d6-c32cca19f7e9.png">
 </p>
