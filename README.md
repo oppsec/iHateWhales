@@ -6,7 +6,7 @@
 
 
 ### what's it?
-i-hate-whales is a deepce-based script that will return container's informations for you 2 escape.
+i-hate-whales is a deepce-based script that will return container's informations for you to escape.
 
 - [X] CVE checker
 - [X] port scan
