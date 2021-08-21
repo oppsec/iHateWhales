@@ -28,9 +28,6 @@ echo -e """ \033[5;37m
            /..'       ''' 
            \033[0m """
 
-echo "$RED red$normal = take a look !" ; echo ""
-echo "${normal}[${green}+${normal}] Enumerating the container."
-echo ""
 #-- começando a putaria kk --
 enumeration(){
 
@@ -126,23 +123,6 @@ ipcont="$(hostname -I 2>/dev/null || hostname -i)"
 ipdef=$(echo "$ipcont" | cut -d'.' -f1-3)
 portas_legais=("22 53 80 81 8080 3216 8081 21 25 3000 3306 33060 3389 139 445 1434 389 636 3268 3269 8000 10050 10051 389 636 3268 3269 1433 2375 2376 3128")
 
-hosts(){
-
-echo "${yellow} -- CONTAINERS DISCOVERY  --"
-echo "        ${DG}maybe slow .. ${normal}"
-
-
-for i in {1..24}
-do
-
-    ip_lista2=$(ping -c 1 ${ipdef}.${i} 2>/dev/null | grep -v "recvmsg" |grep -v "ping" |  grep "bytes from"  | cut -d " " -f 4 | cut -d ":" -f 1)
-    [[ -z "$ip_lista2" ]] && continue
-    echo $ip_lista2 >> ips.txt
-    echo "[$green+$normal] $ip_lista2"
-
-done
-}
-
 portasNC(){
    for letter in $(cat ips.txt)
     do
@@ -188,7 +168,7 @@ pergunta_sabia(){
             rm ips.txt
         ;;
         n|no|nao|N)
-            echo "bye !"
+            echo ""
         ;;
         *)
     ;;
@@ -248,11 +228,11 @@ verificar(){
     echo "${yellow} -- CAPABILITIES  -- ${normal}"
     if [ -x "$(command -v getcap)" ]; then
         capcont=$(getcap -r / 2>/dev/null)
+        echo "${DG}# ------------------------- $normal"
         echo "$capcont"
     fi 
     
     if [ -x "$(command -v $capshEXISTE)" ]; then
-        echo "${DG}# ------------------------- $normal"
         cap_perigosos="cap_sys_admin\|cap_sys_ptrace\|cap_sys_module\|dac_read_search\|dac_override\|cap_shown"
         capsh --print |grep 'cap_' | cut -d ' ' -f 3- | tr -d '=' | sed "s/\($cap_perigosos\)/${UNDERLINED}${vermelho}&${sem_cor}/g"            
     else
@@ -270,12 +250,77 @@ dockersock(){
     fi
 }
 
+tudo(){
+    enumeration
+    verificar
+    suid
+    dockersock
+    hosts
+    #pergunta_sabia
+    docker_verificar
+    verificar_internet
+}
 
-enumeration
-verificar
-suid
-dockersock
-hosts
-pergunta_sabia
-docker_verificar
-verificar_internet
+initial(){
+
+echo "$RED red$normal = take a look !" ; echo ""
+echo "${normal}[${green}+${normal}] Enumerating the container."
+echo ""
+
+}
+
+hosts(){
+
+echo "${yellow} -- CONTAINERS DISCOVERY  --"
+echo "        ${DG}maybe slow .. ${normal}"
+
+
+if [ -x "$(command -v ping)" ]; then
+    for i in {1..24}
+    do
+
+        ip_lista2=$(ping -c 1 ${ipdef}.${i} 2>/dev/null | grep -v "recvmsg" |grep -v "ping" |  grep "bytes from"  | cut -d " " -f 4 | cut -d ":" -f 1)
+        [[ -z "$ip_lista2" ]] && continue
+        echo $ip_lista2 >> ips.txt
+        echo "[$green+$normal] $ip_lista2"
+        pergunta_sabia
+
+    done  
+else
+    echo "${DG}PING BINARY NOT FOUND =[ $normal"
+fi
+
+}
+
+
+case $1 in         
+    "-i" | "--information")  initial ; enumeration
+         ;;
+    "-c" | "--capabilities")  initial ; verificar
+         ;;
+    "-d" | "--dockersock")  initial ; dockersock
+         ;;
+    "-hs" | "--hosts")  initial ; hosts
+         ;;
+    "-s" | "--scan") initial ; hosts
+         ;;
+    "-cv" | "--cve") initial ; docker_verificar
+         ;;
+    "-it" | "--internet") initial ; verificar_internet
+         ;;
+    "-a" | "--all") initial ; tudo
+         ;;
+   *) 
+echo """
+-a or --all ----------------> enum all the container [${green}RECOMMENDED${normal}]
+-i or --information --------> enum the basic informations;
+-c or --capabilities -------> enum capabilities;
+-d or --dockersock ---------> check the exposed docker.sock;
+-hs or --hosts -------------> show containers IP;
+-s or --scan ---------------> scan the containers IP for commons ports;
+-cv or --cve ---------------> scan for CVEs in docker;
+-it or --internet ----------> check if container has internet connection.
+"""
+      exit 1
+      ;;
+esac
