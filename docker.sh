@@ -113,7 +113,7 @@ echo "${normal}[${green}+${normal}] ${green}[CONTAINER GROUPS] ${normal}-----> "
 echo "${yellow} -- USEFUL COMMANDS  -- ${normal}"
 comandos="curl wget gcc nc netcat ncat jq nslookup host hostname dig python python2 python3 nmap socat ctr docker go"
 for CMD in ${comandos}; do
-	tools="$tools $(command -v "${CMD}")"
+    tools="$tools $(command -v "${CMD}")"
 done
 echo "$(echo $tools | tr ' ' '\n')"
 
@@ -228,8 +228,8 @@ verificar(){
     echo "${yellow} -- CAPABILITIES  -- ${normal}"
     if [ -x "$(command -v getcap)" ]; then
         capcont=$(getcap -r / 2>/dev/null)
-        echo "${DG}# ------------------------- $normal"
         echo "$capcont"
+        echo "${DG}# ------------------------- $normal"
     fi 
     
     if [ -x "$(command -v $capshEXISTE)" ]; then
@@ -248,17 +248,6 @@ dockersock(){
     else
         echo "${DG} docker.sock not found."
     fi
-}
-
-tudo(){
-    enumeration
-    verificar
-    suid
-    dockersock
-    hosts
-    #pergunta_sabia
-    docker_verificar
-    verificar_internet
 }
 
 initial(){
@@ -283,8 +272,6 @@ if [ -x "$(command -v ping)" ]; then
         [[ -z "$ip_lista2" ]] && continue
         echo $ip_lista2 >> ips.txt
         echo "[$green+$normal] $ip_lista2"
-        pergunta_sabia
-
     done  
 else
     echo "${DG}PING BINARY NOT FOUND =[ $normal"
@@ -292,6 +279,24 @@ fi
 
 }
 
+pergunta_sabia2(){
+    if [ -x "$(command -v ping)" ]; then
+        pergunta_sabia
+    else
+        echo "flw baitola"
+    fi
+}
+
+tudo(){
+    enumeration
+    verificar
+    suid
+    dockersock
+    hosts
+    pergunta_sabia2
+    docker_verificar
+    verificar_internet
+}
 
 case $1 in         
     "-i" | "--information")  initial ; enumeration
@@ -302,7 +307,7 @@ case $1 in
          ;;
     "-hs" | "--hosts")  initial ; hosts
          ;;
-    "-s" | "--scan") initial ; hosts
+    "-s" | "--scan") initial ; hosts ; pergunta_sabia2
          ;;
     "-cv" | "--cve") initial ; docker_verificar
          ;;
