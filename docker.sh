@@ -283,7 +283,7 @@ pergunta_sabia2(){
     if [ -x "$(command -v ping)" ]; then
         pergunta_sabia
     else
-        echo "flw baitola"
+        echo "[+] Continuing!"
     fi
 }
 
